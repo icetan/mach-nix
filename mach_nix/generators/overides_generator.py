@@ -201,10 +201,11 @@ class OverridesGenerator(ExpressionGenerator):
                 pname = "{name}";
                 version = "{ver}";
                 passthru = (get_passthru "{name}" "{nix_name}") // {{ provider = "{provider}"; }};
-                buildInputs = with python-self; (cleanedAttrs.buildInputs or []) ++ [ {build_inputs_str} ];
-                propagatedBuildInputs =
-                  (cleanedAttrs.propagatedBuildInputs or [])
-                  ++ ( with python-self; [ {prop_build_inputs_str} ]);"""
+                buildInputs =  pkgs.lib.unique
+                  (with python-self; (cleanedAttrs.buildInputs or []) ++ [ {build_inputs_str} ]);
+                propagatedBuildInputs = pkgs.lib.unique
+                  (with python-self; (cleanedAttrs.propagatedBuildInputs or [])
+                  ++ [ {prop_build_inputs_str} ]);"""
         if not keep_src:
             out += f"""
                 src = fetchPypi "{name}" "{ver}";"""
